@@ -1,0 +1,45 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+/.idea
+/DDFS.egg-info
+/DDFS/__pycache__
+/decPip.egg-info
+/dectest2.egg-info
+/venv
+/dectest.egg-info
+dist/decPip-0.0.0.tar.gz
+dist/dectest-0.0.0.tar.gz
+dist/dectest-0.0.1.tar.gz
+dist/dectest-0.0.2.tar.gz
+dist/dectest-0.0.3.tar.gz
+dist/dectest2-0.0.0.tar.gz

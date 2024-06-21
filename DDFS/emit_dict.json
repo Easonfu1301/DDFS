@@ -1,0 +1,110 @@
+{
+    "Weight": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+    ],
+    "Particle_classes": {
+        "Mass": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+        ],
+        "Charge": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Beam_spot": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+        ]
+    },
+    "Emit_mode": [
+        {
+            "p": {
+                "type": "steps",
+                "maxvalue": 120,
+                "minvalue": 5,
+                "steps": 10,
+                "count": 0
+            },
+            "theta": {
+                "type": "steps",
+                "maxvalue": 0.7,
+                "minvalue": 0.1,
+                "steps": 4,
+                "count": 0
+            },
+            "phi": {
+                "type": "fixed",
+                "value": 1
+            }
+        },
+        {
+            "p": {
+                "type": "steps",
+                "maxvalue": 120,
+                "minvalue": 5,
+                "steps": 10,
+                "count": 0
+            },
+            "theta": {
+                "type": "steps",
+                "maxvalue": 0.7,
+                "minvalue": 0.1,
+                "steps": 4,
+                "count": 0
+            },
+            "phi": {
+                "type": "fixed",
+                "value": 1
+            }
+        },
+        {
+            "p": {
+                "type": "steps",
+                "maxvalue": 120,
+                "minvalue": 5,
+                "steps": 10,
+                "count": 0
+            },
+            "theta": {
+                "type": "steps",
+                "maxvalue": 0.7,
+                "minvalue": 0.1,
+                "steps": 4,
+                "count": 0
+            },
+            "phi": {
+                "type": "fixed",
+                "value": 1
+            }
+        },
+        {
+            "p": {
+                "type": "steps",
+                "maxvalue": 120,
+                "minvalue": 5,
+                "steps": 10,
+                "count": 0
+            },
+            "theta": {
+                "type": "steps",
+                "maxvalue": 0.7,
+                "minvalue": 0.1,
+                "steps": 4,
+                "count": 0
+            },
+            "phi": {
+                "type": "fixed",
+                "value": 1
+            }
+        }
+    ]
+}
