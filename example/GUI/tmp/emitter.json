@@ -1,0 +1,35 @@
+{
+    "Weight": [
+        1.0
+    ],
+    "Particle_classes": {
+        "Mass": [
+            0.106
+        ],
+        "Charge": [
+            -1
+        ],
+        "Beam_spot": [
+            -1.0
+        ]
+    },
+    "Emit_mode": [
+        {
+            "p": {
+                "type": "steps",
+                "maxvalue": 100.0,
+                "minvalue": 0.1,
+                "steps": 1000,
+                "count": 0
+            },
+            "theta": {
+                "type": "fixed",
+                "value": 0.15
+            },
+            "phi": {
+                "type": "fixed",
+                "value": 1.0
+            }
+        }
+    ]
+}
