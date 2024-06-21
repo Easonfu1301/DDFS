@@ -15,7 +15,7 @@ pip install DDFS
 You can also download the source code from the github repository and install it manually.
 
 ```bash 
-pip install DDFS-1.0.0.tar.gz
+pip install dist\DDFS-1.0.0.tar.gz
 ```
 
 ## Usage
