@@ -1208,16 +1208,18 @@ class Result:
 
             json_path = file_path.replace("_kalman_post", "")
             json_path = json_path.replace(".root", "")
-            with open(json_path + "_" + tree_type + '.json') as f:
-                current_mode = json.load(f)
 
 
-            self.set_emit_mode(current_mode)
+
             print(tree_type)
 
             if tree_type == "analytic":
+                with open(json_path + "_" + tree_type + '.json') as f:
+                    current_mode = json.load(f)
                 self.read_analytic(tree)
             elif tree_type == "kalman" or tree_type == "kalman_post":
+                with open(json_path + "_kalman" + '.json') as f:
+                    current_mode = json.load(f)
                 if tree_type == "kalman":
                     file_path2 = file_path.replace(".", "_kalman_post.")
                     if not os.path.exists(file_path2):
@@ -1236,6 +1238,7 @@ class Result:
                         if tree2 is None:
                             return False
                         self.read_kalman(tree2, tree)
+            self.set_emit_mode(current_mode)
 
         return tree_type
 

@@ -15,6 +15,7 @@ from PyQt5.QtGui import QGuiApplication
 import time
 from main_Window import Ui_MainWindow
 from Add_test_range_Window import Ui_Dialog
+
 # import cv2
 import pandas as pd
 from tqdm import tqdm
@@ -46,8 +47,8 @@ INFO_TYPE_PARTICLE = ["Mass", "Charge", "Beam_spot", "Weight"]
 INFO_TYPE_PARTICLE_EMIT = ["p", "theta", "phi", "beta"]
 
 X_AXIS_TYPE = ["p", "theta", "phi"]
-Y_AXIS_TYPE = ["dr", "dz", "dt", "df", "dp", "det", "dp2", "p", "theta", "phi"]
-C_AXIS_TYPE = ["dr", "dz", "dt", "df", "dp", "det", "dp2", "p", "theta", "phi"]
+Y_AXIS_TYPE = ["dr", "dz", "dt", "df", "dp", "dp2", "det", "p", "theta", "phi"]
+C_AXIS_TYPE = ["dr", "dz", "dt", "df", "dp", "dp2", "det", "p", "theta", "phi"]
 
 X_AXIS_TYPE_KALMAN = ["p", "theta", "phi"]
 Y_AXIS_TYPE_KALMAN = ["dr", "dz", "dt", "df", "dp", "dp2"]
@@ -56,7 +57,7 @@ C_AXIS_TYPE_KALMAN = ["dr", "dz", "dt", "df", "dp", "dp2", "p", "theta", "phi"]
 
 export_order = []
 
-multiprocessAccelerate = False  # 别用，用了更慢（
+multiprocessAccelerate = False  # 别用，用了更慢 :-(
 if multiprocessAccelerate:
     process_num = 2
 
@@ -124,6 +125,8 @@ class Analytic_cal(QThread):
 
         # result.plot()
         # print(result)
+        emit_mode = emit.emit_param["Emit_mode"][0]
+        result.set_emit_mode(emit_mode)
         return result, error_list
 
 
@@ -285,7 +288,8 @@ class Kalman_cal(QThread):
 
         else:
             print("haha")  # 准备做一个死循环采集
-
+        emit_mode = emit.emit_param["Emit_mode"][0]
+        re.set_emit_mode(emit_mode)
         return re, fig10, error_list
 
 
@@ -322,7 +326,7 @@ class save_Thread(QThread):
         # 执行耗时任务并传递参数
         # print("hahahahhah")
         _write_root(self.name, self.export_table, self.treename)
-        print("file saved")
+        # print("file saved")
 
         # 发送任务完成的信号
         self.finished_signal.emit(1, 0)
@@ -362,6 +366,9 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         self.layout.addWidget(self.toolbar)
 
         self.layout.addWidget(self.canvas)
+
+        if not os.path.exists("tmp"):
+            os.mkdir("tmp")
 
 
         try:
@@ -1093,6 +1100,20 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
 
             export_table = self.Result[0].initial
 
+            export_table["forward_dr"] = self.Result[0].get("forward_dr")
+            export_table["forward_dz"] = self.Result[0].get("forward_dz")
+            export_table["forward_dt"] = self.Result[0].get("forward_dt")
+            export_table["forward_df"] = self.Result[0].get("forward_df")
+            export_table["forward_dp"] = self.Result[0].get("forward_dp")
+            export_table["forward_dp2"] = self.Result[0].get("forward_dp2")
+
+            export_table["backward_dr"] = self.Result[0].get("forward_dr")
+            export_table["backward_dz"] = self.Result[0].get("backward_dz")
+            export_table["backward_dt"] = self.Result[0].get("backward_dt")
+            export_table["backward_df"] = self.Result[0].get("backward_df")
+            export_table["backward_dp"] = self.Result[0].get("backward_dp")
+            export_table["backward_dp2"] = self.Result[0].get("backward_dp2")
+
             if state_now[0] == 2:
                 export_table["ori_path"] = self.Result[0].get("ori_path")
 
@@ -1122,18 +1143,20 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
                 export_table["chi2_forward"] = self.Result[0].get("chi2_forward")
                 export_table["chi2_backward"] = self.Result[0].get("chi2_backward")
 
-            export_table_post = {**self.Result[0].post_initial, **self.Result[0].post_result}
 
-            # 格式化时间作为文件名
+
+            # export_table["emit_mode"] = self.Result[0].emit_mode
+
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getSaveFileName(self, "选择文件路径", "", "root Files (*.root)",
                                                   options=options)
 
-        # Export the data to a CSV file
+        # Export the data to a root file
         if fileName != '':
             rootname = fileName
+            json.dump(self.Result[0].emit_mode, open(rootname +  "_" + type +'.json', 'w'))
 
             name = rootname + '.root'
 
@@ -1142,7 +1165,8 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
             self.save_thread.start()
             if self.Result_Flag == 1:
                 name2 = rootname + '_kalman_post.root'
-                self.save_thread2 = save_Thread(name2, export_table_post, treename=type)
+                export_table_post = {**self.Result[0].post_initial, **self.Result[0].post_result}
+                self.save_thread2 = save_Thread(name2, export_table_post, treename='kalman_post')
                 self.save_thread2.start()
 
 
@@ -1155,29 +1179,130 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "root Files (*.root)",
                                                    options=options)
 
-        with uproot.open(file_path) as f:
 
-            try:
-                tree = f["analytic"]
-                Result_Flag = 0
-            except Exception as e:
-                tree = f["kalman"]
-                Result_Flag = 1
 
-            print(Result_Flag)
-            load_table = {}
-            for key in tree.keys():
-                load_table[key] = np.array(tree[key].array())
+        # re = Result(1000)
 
-            re = Result(1000)
+        re = Result()
+        tree_type = re.load_root(file_path)
+        print("treee", tree_type)
 
-            if Result_Flag == 0:
-                self.Result = [load_table, None]
-                self.handle_task_completion(self.Result, Result_Flag)
+        self.current_mode = self.generate_emit_mode()
+        self.submitButton.setEnabled(1)
 
-            elif Result_Flag == 1:
-                self.Result = [load_table, plt.figure(), None]
-                self.handle_task_completion(self.Result, Result_Flag)
+
+            # self.handle_task_completion(self.Result, 0)
+
+
+            # self.handle_task_completion(self.Result, 1)
+
+        if tree_type == "analytic":
+            self.Result_Flag = 0
+            self.current_mode = re.emit_mode
+
+            self.Result = [re, {}]  # analytic
+            # self.canvas.update_pic(self.Result)
+            # 创建第二个 fig 对象
+            self.plotWidgeth.setCurrentIndex(0)
+            error_list = self.Result[1]
+
+            if error_list:
+                error_string = "\n".join(
+                    [f"发生了 {count} 次 {error_type} 错误。" for error_type, count in error_list.items()])
+                # print(error_string)
+                self.show_error_message(error_string)
+            x_idx = self.dataType_comboBox_X.currentIndex() if self.dataType_comboBox_X.currentIndex() != 0 else 1
+            self.dataType_comboBox_X.setCurrentIndex(x_idx)
+            # self.Result = self.Result[0]
+            self.result_plot()
+
+            self.ResultWidget.setCurrentIndex(0)
+
+
+        elif tree_type == "kalman" or tree_type == "kalman_post":
+            self.Result_Flag = 1
+
+            self.Result = [re, plt.figure(), {}]
+            self.plotWidgeth.setCurrentIndex(1)
+            self.ResultWidget.setCurrentIndex(1)
+
+            self.current_mode = re.emit_mode
+
+            # self.current_mode = json.load(json_path + "_" + tree_type + '.json')
+
+            # self.dataType_comboBox_C_kalman.setCurrentIndex(0)
+            # self.dataType_comboBox_X_kalman.setCurrentIndex(0)
+            # self.dataType_comboBox_Y_kalman.setCurrentIndex(0)
+            # self.dataType_comboBox_p_step.setCurrentIndex(0)
+            # self.dataType_comboBox_theta_step.setCurrentIndex(0)
+            # self.dataType_comboBox_phi_step.setCurrentIndex(0)
+            # self.dataType_comboBox_layer.setCurrentIndex(0)
+            # self.dataType_comboBox_filter.setCurrentIndex(0)
+            #
+            # self.dataType_comboBox_C_kalman.setEnabled(0)
+            # self.dataType_comboBox_X_kalman.setEnabled(0)
+            # self.dataType_comboBox_Y_kalman.setEnabled(0)
+            # self.dataType_comboBox_p_step.setEnabled(0)
+            # self.dataType_comboBox_theta_step.setEnabled(0)
+            # self.dataType_comboBox_phi_step.setEnabled(0)
+            # self.dataType_comboBox_layer.setEnabled(0)
+            # self.dataType_comboBox_filter.setEnabled(0)
+
+
+            comboxs = {
+                "p": self.dataType_comboBox_p_step,
+                "theta": self.dataType_comboBox_theta_step,
+                "phi": self.dataType_comboBox_phi_step
+            }
+
+            if self.Result[0].judge_mode(self.current_mode):
+                for key, value in self.current_mode.items():
+                    if self.current_mode[key]["type"] == "steps":
+                        comboxs[key].clear()
+                        comboxs[key].addItem("None")
+                        minvalue = self.current_mode[key]["minvalue"]
+                        maxvalue = self.current_mode[key]["maxvalue"]
+                        for i in np.linspace(minvalue, maxvalue, self.current_mode[key]["steps"]):
+                            comboxs[key].addItem(str(i))
+                    else:
+                        comboxs[key].clear()
+                        comboxs[key].addItem("None")
+            else:
+                for key, value in comboxs.items():
+                    comboxs[key].clear()
+                    comboxs[key].addItem("None")
+
+
+            self.dataType_comboBox_layer.clear()
+            self.dataType_comboBox_layer.addItem("None")
+
+            detector_length = self.Result[0].post_result["backward_dr"].shape[1]
+
+            for i in range(detector_length):
+                self.dataType_comboBox_layer.addItem(str(i + 1))
+            self.dataType_comboBox_layer.setCurrentIndex(1)
+            #
+            # error_list = self.Result[2]
+            #
+            # if error_list:
+            #     error_string = "\n".join(
+            #         [f"发生了 {count} 次 {error_type} 错误。" for error_type, count in error_list.items()])
+            #     # print(error_string)
+            #     self.show_error_message(error_string)
+            # if self.result_visual_checkBox.checkState() == 2:
+            #     self.update_pic(self.Result[1])
+            # else:
+            #     fig = plt.figure()
+            #     self.update_pic(fig)
+
+            # self.result_plot()
+
+
+
+
+
+
+
 
         pass
 
@@ -1362,7 +1487,7 @@ if __name__ == '__main__':
     my_pyqt_form = MyPyQT_Form()
     my_pyqt_form.show()
     sys.exit(app.exec_())
-# pyinstaller -F demo.py
+# pyinstaller -F D:\files\pyproj\dec_use\example\GUI\demo.py
 # pyinstaller -F -w demo.py
-# pyinstaller --path D:\file\pyproj\sch_new\venv\Lib\site-packages\PyQt5\Qt\bin -F demo.py
+# pyinstaller --path D:\file\pyproj\sch_new\venv\Lib\site-packages\PyQt5\Qt\bin -F D:\files\pyproj\dec_use\example\GUI\demo.py
 # cxfreeze demo.py --target-dir dist

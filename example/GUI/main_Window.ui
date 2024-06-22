@@ -1629,12 +1629,12 @@
               </item>
               <item>
                <property name="text">
-                <string>det</string>
+                <string>dp/p^2</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>dp/p^2</string>
+                <string>det</string>
                </property>
               </item>
               <item>
