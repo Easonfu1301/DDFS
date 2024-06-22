@@ -1205,6 +1205,14 @@ class Result:
             tree_type = "analytic" if tree == f.get("analytic") else "kalman" if tree == f.get(
                 "kalman") else "kalman_post"
 
+
+            json_path = file_path.replace("_kalman_post", "")
+            json_path = json_path.replace(".root", "")
+            with open(json_path + "_" + tree_type + '.json') as f:
+                current_mode = json.load(f)
+
+
+            self.set_emit_mode(current_mode)
             print(tree_type)
 
             if tree_type == "analytic":
