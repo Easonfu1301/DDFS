@@ -2,6 +2,9 @@ import time
 # from pympler import asizeof
 import numpy as np
 import pandas as pd
+import warnings
+import uproot
+import os
 import scipy
 import sys
 import math
@@ -18,6 +21,7 @@ from tqdm import tqdm
 # matplotlib.use('TkAgg')
 import random
 import json
+
 matplotlib.rcParams['font.family'] = 'Times New Roman'
 matplotlib.rcParams['font.size'] = 12
 matplotlib.rcParams['font.weight'] = 'bold'
@@ -91,14 +95,32 @@ X_UNIT_LABEL = {
 }
 
 Y_UNIT_LABEL = {
-    "dr": r"\textbf{$\mathbf{dr}$  (mm)}",
-    "dz": r"\textbf{$\mathbf{dz}$  (mm)}",
+    "dr": r"\textbf{$\mathbf{dr}$  $(\mu m)$}",
+    "dz": r"\textbf{$\mathbf{dz}$  $(\mu m)$}",
     "dt": r"\textbf{$\mathbf{d \theta}$  (mrads)}",
     "df": r"\textbf{$\mathbf{d \phi}$  (mrads)}",
     "dp": r"\textbf{$\mathbf{dp_t/p_t (\times 10^{-3})} $}",
     "dp2": r"\textbf{$\mathbf{dp_t/p_t^2} \ \ (\times 10^{-5}\ \mathrm{GeV^{-1}})$}",
-   "det": r"\textbf{det}"
+    "p": r"$\mathbf{p_t}$  (GeV)",
+    "theta": r"$\mathbf{\theta}$  (°)",
+    "phi": r"$\mathbf{\phi}$  (rads)",
+    "det": r"\textbf{det}"
 }
+
+INITIAL_TYPE = ["B", "p", "theta", "phi", "MS", "RE", "mass", "charge", "beam_spot"]
+A_RESULT_TYPE = ["dr", "dz", "dt", "df", "dp", "dp2", "det"]
+K_POST_RESULT_TYPE = [
+    "forward_dr", "forward_dz", "forward_dt", "forward_df", "forward_dp", "forward_dp2",
+    "backward_dr", "backward_dz", "backward_dt", "backward_df", "backward_dp", "backward_dp2",
+]
+
+K_RESULT_TYPE = [
+    "forward_dr", "forward_dz", "forward_dt", "forward_df", "forward_dp", "forward_dp2",
+    "backward_dr", "backward_dz", "backward_dt", "backward_df", "backward_dp", "backward_dp2",
+    "f_dr_first", "f_dz_first", "f_dt_first", "f_df_first", "f_dp_first", "f_dp2_first",
+    "b_dr_first", "b_dz_first", "b_dt_first", "b_df_first", "b_dp_first", "b_dp2_first",
+    "measure_path", "res_ori", "res_forward", "res_backward", "chi2_forward", "chi2_backward",
+]
 
 
 class Detector:
@@ -457,16 +479,13 @@ class Environment:
         return self.environment_param["B"], self.environment_param["multiple_scattering"], self.environment_param[
             "position_resolution"]
 
-    def export(self, path = 'my_dict.json'):
+    def export(self, path='my_dict.json'):
         with open(path, 'w') as f:
             json.dump(self.environment_param, f, indent=4)
-
 
     def load(self, path):
         with open(path) as f:
             self.environment_param = json.load(f)
-
-
 
     # def add_testing_list(self, info_type, start_value, end_value, distribution="Liner"):
     #     pass
@@ -537,7 +556,7 @@ class Emitter:  # ParticleGun
     def __len__(self):
         return len(self.emit_param["Weight"])
 
-    def export(self, path = 'emit_dict.json'):
+    def export(self, path='emit_dict.json'):
 
         print(self.emit_param)
         export_dic = {
@@ -545,12 +564,11 @@ class Emitter:  # ParticleGun
             "Particle_classes": {
                 "Mass": [particle.get_info("dir")["Mass"] for particle in self.emit_param["Particle_classes"]],
                 "Charge": [particle.get_info("dir")["Charge"] for particle in self.emit_param["Particle_classes"]],
-                "Beam_spot": [particle.get_info("dir")["Beam_spot"] for particle in self.emit_param["Particle_classes"]],
+                "Beam_spot": [particle.get_info("dir")["Beam_spot"] for particle in
+                              self.emit_param["Particle_classes"]],
             },
             "Emit_mode": self.emit_param["Emit_mode"]
         }
-
-
 
         with open(path, 'w') as f:
             json.dump(export_dic, f, indent=4)
@@ -558,11 +576,10 @@ class Emitter:  # ParticleGun
     def load(self, path):
         with open(path) as f:
             self.emit_param = json.load(f)
-        self.emit_param["Particle_classes"] = [Particle(mass=mass, charge=charge, beam_spot=beam_spot) for mass, charge, beam_spot in zip(
-            self.emit_param["Particle_classes"]["Mass"], self.emit_param["Particle_classes"]["Charge"],
-            self.emit_param["Particle_classes"]["Beam_spot"])]
-
-
+        self.emit_param["Particle_classes"] = [Particle(mass=mass, charge=charge, beam_spot=beam_spot) for
+                                               mass, charge, beam_spot in zip(
+                self.emit_param["Particle_classes"]["Mass"], self.emit_param["Particle_classes"]["Charge"],
+                self.emit_param["Particle_classes"]["Beam_spot"])]
 
     def copy(self):
         return copy.deepcopy(self)
@@ -719,7 +736,11 @@ class Experiment:
 
 
 class Result:
-    def __init__(self, test_num):
+    def __init__(self, test_num=None):
+        if test_num is None:
+            print(
+                "\033[1;33mPlease input the test number When create a Result object. or load the data from file.\033[0m")
+            # warnings.warn("")
         self.result = {}
         self.initial = {}
         self.test_num = test_num
@@ -730,6 +751,9 @@ class Result:
 
     def __str__(self):
         return str(self.initial) + "\n" + str(self.result)
+
+    def set_emit_mode(self, emit_mode):
+        self.emit_mode = emit_mode
 
     def append(self, ini_para, result_para):
 
@@ -793,7 +817,6 @@ class Result:
 
                 sorted = np.argsort(x_data[index])
                 index = index[sorted]
-
 
                 ax.plot(np.array(x_data)[index], np.array(y_data)[index], '.-')
             if key == "theta":
@@ -1171,14 +1194,73 @@ class Result:
             self.initial[key] = value[0:self.count]
         pass
 
-    def load(self, path):
+    def load_root(self, file_path):
+        if not os.path.exists(file_path):
+            return False
+        with uproot.open(file_path) as f:
+
+            tree = f.get("analytic") or f.get("kalman") or f.get("kalman_post")
+            if tree is None:
+                return False
+            tree_type = "analytic" if tree == f.get("analytic") else "kalman" if tree == f.get(
+                "kalman") else "kalman_post"
+
+            print(tree_type)
+
+            if tree_type == "analytic":
+                self.read_analytic(tree)
+            elif tree_type == "kalman" or tree_type == "kalman_post":
+                if tree_type == "kalman":
+                    file_path2 = file_path.replace(".", "_kalman_post.")
+                    if not os.path.exists(file_path2):
+                        return False
+                    with uproot.open(file_path2) as f2:
+                        tree2 = f2.get("kalman_post")
+                        if tree2 is None:
+                            return False
+                        self.read_kalman(tree, tree2)
+                else:
+                    file_path2 = file_path.replace("_kalman_post", "")
+                    if not os.path.exists(file_path2):
+                        return False
+                    with uproot.open(file_path2) as f2:
+                        tree2 = f2.get("kalman")
+                        if tree2 is None:
+                            return False
+                        self.read_kalman(tree2, tree)
+
+        return tree_type
+
+    def read_analytic(self, tree):
+        self.count = tree[tree.keys()[0]].array(library="np").shape[0]
+        self.test_num = tree[tree.keys()[0]].array(library="np").shape[0]
+        for key in tree.keys():
+            if key in INITIAL_TYPE:
+                self.initial[key] = tree[key].array(library="np")
+            elif key in A_RESULT_TYPE:
+                self.result[key] = tree[key].array(library="np")
+
+    def read_kalman(self, tree1, tree2=None):
+        self.count = tree1[tree1.keys()[0]].array(library="np").shape[0]
+        self.test_num = tree1[tree1.keys()[0]].array(library="np").shape[0]
+
+
+        for key in tree1.keys():
+            if key in INITIAL_TYPE:
+                self.initial[key] = tree1[key].array(library="np")
+            elif key in K_RESULT_TYPE:
+                self.result[key] = tree1[key].array(library="np")
+        if tree2 is not None:
+            self.post_initial = {}
+            self.post_result = {}
+            for key in tree2.keys():
+                if key in INITIAL_TYPE:
+                    self.post_initial[key] = tree2[key].array(library="np")
+                elif key in K_POST_RESULT_TYPE:
+                    self.post_result[key] = tree2[key].array(library="np")
+
         pass
-
-
-
-
 if __name__ == "__main__":
-
     # t = time.time()
     # dec = Detector()
     # # print(dec)

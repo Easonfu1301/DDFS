@@ -7,7 +7,6 @@ from tqdm import tqdm
 matplotlib.use('Tkagg')
 import time
 
-
 def _write_root(file, table, treename='kalman', compression=-1):
     # for key in table:
     #     table[key] = np.array(table[key])

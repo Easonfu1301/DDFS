@@ -59,7 +59,7 @@ def spiral_func(r_phi, x0, y0, z0, r0, tan_theta0):
 class Resolution:
     def __init__(self, dec_info_list, environment_info_list, emitter):
         self.emitter = emitter
-        self.radius_list, self.budget_list, self.efficiency_list, self.loc0_list, self.loc1_list, _ = dec_info_list
+        self.radius_list, self.budget_list, self.efficiency_list, self.loc0_list, self.loc1_list, self.half_z_list = dec_info_list
         self.B, mutiple_scattering_FLAG, position_resolution_FLAG = environment_info_list
         self.MS = mutiple_scattering_FLAG
         self.RE = position_resolution_FLAG
@@ -90,7 +90,8 @@ class Resolution:
         observed_param = math.inf
         observed_XYZ = math.inf
 
-        if z_helix > 3000:
+        # if z_helix > 3000:
+        if np.abs(z_helix) > self.half_z_list[layer_now_idx]:
             # raise a warning with yellow words
             print("\033[1;33mWarning: z_helix is too large!\033[0m")
 
