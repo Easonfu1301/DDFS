@@ -17,6 +17,7 @@ from scipy.optimize import curve_fit
 from scipy import stats
 from scipy.stats import norm
 from tqdm import tqdm
+from DDFS.write_root import _write_root
 
 # matplotlib.use('TkAgg')
 import random
@@ -1205,11 +1206,8 @@ class Result:
             tree_type = "analytic" if tree == f.get("analytic") else "kalman" if tree == f.get(
                 "kalman") else "kalman_post"
 
-
             json_path = file_path.replace("_kalman_post", "")
             json_path = json_path.replace(".root", "")
-
-
 
             print(tree_type)
 
@@ -1221,7 +1219,7 @@ class Result:
                 with open(json_path + "_kalman" + '.json') as f:
                     current_mode = json.load(f)
                 if tree_type == "kalman":
-                    file_path2 = file_path.replace(".", "_kalman_post.")
+                    file_path2 = file_path.replace(".root", "_kalman_post.root")
                     if not os.path.exists(file_path2):
                         return False
                     with uproot.open(file_path2) as f2:
@@ -1255,7 +1253,6 @@ class Result:
         self.count = tree1[tree1.keys()[0]].array(library="np").shape[0]
         self.test_num = tree1[tree1.keys()[0]].array(library="np").shape[0]
 
-
         for key in tree1.keys():
             if key in INITIAL_TYPE:
                 self.initial[key] = tree1[key].array(library="np")
@@ -1271,6 +1268,29 @@ class Result:
                     self.post_result[key] = tree2[key].array(library="np")
 
         pass
+
+    def export(self, path, filename, treename):
+        assert treename in ["analytic", "kalman"]
+        if treename == "analytic":
+            json.dump(self.emit_mode, open(path + "\\" + filename + "_" + treename + '.json', 'w'))
+            export_table_post = {**self.initial, **self.result}
+            _write_root(path + "\\" + filename + ".root", export_table_post, treename)
+
+        elif treename == "kalman":
+            json.dump(self.emit_mode, open(path + "\\" + filename + "_kalman" + '.json', 'w'))
+
+            export_table_post = {**self.initial, **self.result}
+            _write_root(path + "\\" + filename + ".root", export_table_post, treename)
+
+
+            export_table_post = {**self.post_initial, **self.post_result}
+            _write_root(path + "\\" + filename + "_kalman_post.root", export_table_post, "kalman_post")
+
+
+
+        pass
+
+
 if __name__ == "__main__":
     # t = time.time()
     # dec = Detector()
