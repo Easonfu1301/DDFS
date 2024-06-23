@@ -1474,7 +1474,7 @@
         <item row="12" column="0" colspan="3">
          <widget class="QStackedWidget" name="plotWidgeth">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page_6">
            <layout class="QGridLayout" name="gridLayout_8">
@@ -1928,6 +1928,11 @@
               <item>
                <property name="text">
                 <string>dp</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>dp2</string>
                </property>
               </item>
              </widget>

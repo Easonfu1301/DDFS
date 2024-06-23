@@ -738,6 +738,7 @@ class Ui_MainWindow(object):
         self.dataType_comboBox_Y_kalman.addItem("")
         self.dataType_comboBox_Y_kalman.addItem("")
         self.dataType_comboBox_Y_kalman.addItem("")
+        self.dataType_comboBox_Y_kalman.addItem("")
         self.gridLayout_9.addWidget(self.dataType_comboBox_Y_kalman, 1, 1, 1, 1)
         self.dataType_comboBox_C_kalman = QtWidgets.QComboBox(self.page_7)
         self.dataType_comboBox_C_kalman.setObjectName("dataType_comboBox_C_kalman")
@@ -820,7 +821,7 @@ class Ui_MainWindow(object):
         self.show_panel.setCurrentIndex(0)
         self.function_page.setCurrentIndex(2)
         self.ResultWidget.setCurrentIndex(1)
-        self.plotWidgeth.setCurrentIndex(0)
+        self.plotWidgeth.setCurrentIndex(1)
         self.func_select_button.clicked.connect(MainWindow.set_page) # type: ignore
         self.load_design_button.clicked.connect(MainWindow.load_design) # type: ignore
         self.add_detector_button.clicked.connect(MainWindow.add_detector) # type: ignore
@@ -1043,6 +1044,7 @@ class Ui_MainWindow(object):
         self.dataType_comboBox_Y_kalman.setItemText(3, _translate("MainWindow", "dtheta"))
         self.dataType_comboBox_Y_kalman.setItemText(4, _translate("MainWindow", "df"))
         self.dataType_comboBox_Y_kalman.setItemText(5, _translate("MainWindow", "dp"))
+        self.dataType_comboBox_Y_kalman.setItemText(6, _translate("MainWindow", "dp2"))
         self.dataType_comboBox_C_kalman.setItemText(0, _translate("MainWindow", "None"))
         self.dataType_comboBox_C_kalman.setItemText(1, _translate("MainWindow", "p"))
         self.dataType_comboBox_C_kalman.setItemText(2, _translate("MainWindow", "θ"))

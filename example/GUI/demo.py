@@ -28,6 +28,7 @@ from DDFS.element import *
 import matplotlib
 # import uproot3 as uproot
 import uproot
+
 plt.rcParams['savefig.dpi'] = 600  # 图像保存时的DPI
 # plt.rcParams['figure.dpi'] = 300   # 图形的DPI
 # from pycallgraph2 import PyCallGraph
@@ -166,34 +167,27 @@ class Kalman_cal(QThread):
         ax5 = fig10.add_subplot(235)
         ax6 = fig10.add_subplot(236)
 
-
         step_seed = 1
         mode = emit.get_info("dir")["Emit_mode"][0]
         for key, item in mode.items():
             if item["type"] == "steps":
                 step_seed *= item["steps"]
 
-
         error_list = {}
         re = Result(test_num=test_num)
-        np.random.seed(int(np.fmod(time.time(), 10)*1e5))
+        np.random.seed(int(np.fmod(time.time(), 10) * 1e5))
         seed = np.random.randint(0, 100000)
         if test_num > 0:
             for num in tqdm(range(test_num)):
                 try:
 
                     if num % step_seed == 0:
-                        np.random.seed(int(np.fmod(time.time(), 10)*1e5))
+                        np.random.seed(int(np.fmod(time.time(), 10) * 1e5))
                         seed = np.random.randint(0, 100000)
-
 
                     np.random.seed(seed)
 
-
-
-
                     ori_path, observe_store_XYZ = res_k.generate_path()
-
 
                     res_k.generate_ref_path()
                     # res_k.initialize_filter(Forward=False)
@@ -228,11 +222,14 @@ class Kalman_cal(QThread):
                         ax4.set_title("ori - error - z")
 
                         ax5.plot(res_k.radius_list,
-                                 res_k.radius_list * (res_k.kalman_fit_store_backward[:, 0] - res_k.param_helix_store[:, 0]), 'b.',
+                                 res_k.radius_list * (
+                                             res_k.kalman_fit_store_backward[:, 0] - res_k.param_helix_store[:, 0]),
+                                 'b.',
                                  alpha=0.01)
                         ax5.set_title("backfit - error - rphi")
 
-                        ax6.plot(res_k.radius_list, res_k.kalman_fit_store_backward[:, 1] - res_k.param_helix_store[:, 1], 'b.',
+                        ax6.plot(res_k.radius_list,
+                                 res_k.kalman_fit_store_backward[:, 1] - res_k.param_helix_store[:, 1], 'b.',
                                  alpha=0.01)
                         ax6.set_title("backfit - error - z")
 
@@ -370,7 +367,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists("tmp"):
             os.mkdir("tmp")
 
-
         try:
             d = Detector()
             d.load_designed("tmp\\detector_designed.csv")
@@ -379,7 +375,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.detectors = [Detector()]
             self.add_layer()
-
 
         try:
             emit = Emitter()
@@ -390,7 +385,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
             self.add_particle()
             self.emitters[self.Emitter_combox.currentIndex()].update_particle(self.particle_combox.currentIndex(),
                                                                               INFO_TYPE_PARTICLE[3], float(1))
-
 
         self.update_particle_table()
         try:
@@ -893,7 +887,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
     def check_submit_info(self):
         pass
 
-
     def method_changed(self):
         idx = self.submit_method_comboBox.currentIndex()
         if idx == 0:
@@ -1143,10 +1136,7 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
                 export_table["chi2_forward"] = self.Result[0].get("chi2_forward")
                 export_table["chi2_backward"] = self.Result[0].get("chi2_backward")
 
-
-
             # export_table["emit_mode"] = self.Result[0].emit_mode
-
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -1156,7 +1146,7 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         # Export the data to a root file
         if fileName != '':
             rootname = fileName
-            json.dump(self.Result[0].emit_mode, open(rootname +  "_" + type +'.json', 'w'))
+            json.dump(self.Result[0].emit_mode, open(rootname + "_" + type + '.json', 'w'))
 
             name = rootname + '.root'
 
@@ -1179,8 +1169,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "root Files (*.root)",
                                                    options=options)
 
-
-
         # re = Result(1000)
 
         re = Result()
@@ -1190,11 +1178,9 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_mode = self.generate_emit_mode()
         self.submitButton.setEnabled(1)
 
+        # self.handle_task_completion(self.Result, 0)
 
-            # self.handle_task_completion(self.Result, 0)
-
-
-            # self.handle_task_completion(self.Result, 1)
+        # self.handle_task_completion(self.Result, 1)
 
         if tree_type == "analytic":
             self.Result_Flag = 0
@@ -1248,7 +1234,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.dataType_comboBox_layer.setEnabled(0)
             # self.dataType_comboBox_filter.setEnabled(0)
 
-
             comboxs = {
                 "p": self.dataType_comboBox_p_step,
                 "theta": self.dataType_comboBox_theta_step,
@@ -1271,7 +1256,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
                 for key, value in comboxs.items():
                     comboxs[key].clear()
                     comboxs[key].addItem("None")
-
 
             self.dataType_comboBox_layer.clear()
             self.dataType_comboBox_layer.addItem("None")
@@ -1296,13 +1280,6 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
             #     self.update_pic(fig)
 
             # self.result_plot()
-
-
-
-
-
-
-
 
         pass
 
@@ -1476,8 +1453,6 @@ class constrant_setting_Window(QtWidgets.QDialog, Ui_Dialog):
 
 
 if __name__ == '__main__':
-
-
     ######使用下面的方式一定程度上可以解决界面模糊问题--解决电脑缩放比例问题
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     # main.manual_con
