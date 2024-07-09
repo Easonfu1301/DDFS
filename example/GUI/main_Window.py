@@ -819,7 +819,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.show_panel.setCurrentIndex(0)
-        self.function_page.setCurrentIndex(2)
+        self.function_page.setCurrentIndex(0)
         self.ResultWidget.setCurrentIndex(1)
         self.plotWidgeth.setCurrentIndex(1)
         self.func_select_button.clicked.connect(MainWindow.set_page) # type: ignore
@@ -856,6 +856,7 @@ class Ui_MainWindow(object):
         self.dataType_comboBox_filter.currentIndexChanged['int'].connect(MainWindow.result_plot) # type: ignore
         self.submit_method_comboBox.currentIndexChanged['int'].connect(MainWindow.method_changed) # type: ignore
         self.Load_pushButton.clicked.connect(MainWindow.load_result) # type: ignore
+        self.delete_layer_button.clicked.connect(MainWindow.delete_layer) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

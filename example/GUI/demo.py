@@ -500,6 +500,29 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         self.update_layer_table()
         pass
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            self.delete_layer()
+
+        elif event.key() == Qt.Key_Escape:
+            self.close()
+
+        # shift + "+"
+        elif event.key() == Qt.Key_Plus and self.function_page.currentIndex() == 0:
+            self.add_layer()
+
+    def delete_layer(self):
+        if self.layer_info.currentItem() is None:
+            return False
+        layer_idx = self.layer_info.currentItem().row()
+
+        dec_idx = self.detector_comboBox.currentIndex()
+
+
+        self.detectors[dec_idx].delete_layer(layer_idx)
+        self.update_layer_table()
+        pass
+
     def update_particle_combox(self):
 
         idx_emi = self.Emitter_combox.currentIndex()
@@ -621,13 +644,19 @@ class MyPyQT_Form(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.layer_info.currentItem() is None:
             return 0
         if self.layer_info.currentItem().row() == item.row() and self.layer_info.currentItem().column() == item.column():
-            self.detectors[self.detector_comboBox.currentIndex()].update_layer(item.row(),
-                                                                               INFO_TYPE_LAYER[item.column()], float(
-                    self.layer_info.item(item.row(), item.column()).text()))
-            idx = self.detector_comboBox.currentIndex()
+            try:
+                self.detectors[self.detector_comboBox.currentIndex()].update_layer(item.row(),
+                                                                                   INFO_TYPE_LAYER[item.column()], float(
+                        self.layer_info.item(item.row(), item.column()).text()))
+                idx = self.detector_comboBox.currentIndex()
 
-            self.update_layer_table()
-            return 1
+                self.update_layer_table()
+                return 1
+
+            except Exception as e:
+                self.show_error_message("Please input a number")
+                self.update_layer_table()
+                return 0
 
     def update_particle_table(self):
         # print(self.detectors)

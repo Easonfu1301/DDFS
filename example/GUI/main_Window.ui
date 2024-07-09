@@ -149,7 +149,7 @@
        <number>0</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -2158,8 +2158,8 @@
    <slot>load_design()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>808</x>
-     <y>92</y>
+     <x>955</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
      <x>952</x>
@@ -2174,8 +2174,8 @@
    <slot>add_detector()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>764</x>
-     <y>84</y>
+     <x>772</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>559</x>
@@ -2190,8 +2190,8 @@
    <slot>add_layer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>764</x>
-     <y>82</y>
+     <x>772</x>
+     <y>115</y>
     </hint>
     <hint type="destinationlabel">
      <x>956</x>
@@ -2206,8 +2206,8 @@
    <slot>update_layer_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>350</y>
+     <x>955</x>
+     <y>634</y>
     </hint>
     <hint type="destinationlabel">
      <x>368</x>
@@ -2222,8 +2222,8 @@
    <slot>update_layer_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>84</y>
+     <x>955</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>958</x>
@@ -2238,8 +2238,8 @@
    <slot>visualize_dectetor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>694</x>
-     <y>138</y>
+     <x>955</x>
+     <y>216</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -2254,8 +2254,8 @@
    <slot>export_design()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>764</x>
-     <y>92</y>
+     <x>772</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
      <x>955</x>
@@ -2270,8 +2270,8 @@
    <slot>add_Emitter()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>644</x>
-     <y>88</y>
+     <x>833</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>584</x>
@@ -2286,8 +2286,8 @@
    <slot>add_particle()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>672</x>
-     <y>88</y>
+     <x>955</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>971</x>
@@ -2302,8 +2302,8 @@
    <slot>update_particle_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>616</x>
-     <y>90</y>
+     <x>711</x>
+     <y>169</y>
     </hint>
     <hint type="destinationlabel">
      <x>969</x>
@@ -2318,8 +2318,8 @@
    <slot>update_particle_combox()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>616</x>
-     <y>88</y>
+     <x>711</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>582</x>
@@ -2334,8 +2334,8 @@
    <slot>update_particle_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>672</x>
-     <y>94</y>
+     <x>955</x>
+     <y>255</y>
     </hint>
     <hint type="destinationlabel">
      <x>973</x>
@@ -2350,8 +2350,8 @@
    <slot>update_particle_emit_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>685</x>
-     <y>211</y>
+     <x>955</x>
+     <y>441</y>
     </hint>
     <hint type="destinationlabel">
      <x>969</x>
@@ -2366,8 +2366,8 @@
    <slot>update_envir_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>685</x>
-     <y>131</y>
+     <x>955</x>
+     <y>628</y>
     </hint>
     <hint type="destinationlabel">
      <x>968</x>
@@ -2382,8 +2382,8 @@
    <slot>update_envir_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>685</x>
-     <y>101</y>
+     <x>833</x>
+     <y>540</y>
     </hint>
     <hint type="destinationlabel">
      <x>578</x>
@@ -2398,8 +2398,8 @@
    <slot>update_envir_info()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>644</x>
-     <y>100</y>
+     <x>833</x>
+     <y>511</y>
     </hint>
     <hint type="destinationlabel">
      <x>408</x>
@@ -2414,8 +2414,8 @@
    <slot>create_condition()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>764</x>
-     <y>94</y>
+     <x>772</x>
+     <y>290</y>
     </hint>
     <hint type="destinationlabel">
      <x>578</x>
@@ -2462,8 +2462,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>713</x>
-     <y>352</y>
+     <x>628</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2478,8 +2478,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>826</x>
-     <y>352</y>
+     <x>657</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
      <x>581</x>
@@ -2494,8 +2494,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>940</x>
-     <y>352</y>
+     <x>686</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2510,8 +2510,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>946</x>
-     <y>441</y>
+     <x>686</x>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
      <x>693</x>
@@ -2526,8 +2526,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>628</x>
-     <y>318</y>
+     <x>714</x>
+     <y>354</y>
     </hint>
     <hint type="destinationlabel">
      <x>582</x>
@@ -2542,8 +2542,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>656</x>
-     <y>318</y>
+     <x>830</x>
+     <y>354</y>
     </hint>
     <hint type="destinationlabel">
      <x>581</x>
@@ -2558,8 +2558,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>684</x>
-     <y>318</y>
+     <x>946</x>
+     <y>354</y>
     </hint>
     <hint type="destinationlabel">
      <x>581</x>
@@ -2574,8 +2574,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>628</x>
-     <y>324</y>
+     <x>714</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2590,8 +2590,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>656</x>
-     <y>324</y>
+     <x>830</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>583</x>
@@ -2606,8 +2606,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>684</x>
-     <y>324</y>
+     <x>946</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>582</x>
@@ -2622,8 +2622,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>628</x>
-     <y>330</y>
+     <x>714</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2638,8 +2638,8 @@
    <slot>result_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>656</x>
-     <y>330</y>
+     <x>830</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>581</x>
@@ -2679,6 +2679,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>delete_layer_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>delete_layer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>873</x>
+     <y>108</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>581</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>set_page()</slot>
@@ -2702,5 +2718,6 @@
   <slot>export_result()</slot>
   <slot>method_changed()</slot>
   <slot>load_result()</slot>
+  <slot>delete_layer()</slot>
  </slots>
 </ui>
