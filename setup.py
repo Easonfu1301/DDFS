@@ -13,8 +13,8 @@ setup(
                 'common_test_parameter2',
                 'design_detector'],
     install_requires=[
-        'numpy',
-        'matplotlib',
+        'numpy<2.0.0',
+        'matplotlib==3.8.4',
         'uproot',
         'tqdm',
         'pandas',

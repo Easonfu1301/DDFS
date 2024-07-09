@@ -18,6 +18,7 @@ from scipy import stats
 from scipy.stats import norm
 from tqdm import tqdm
 from DDFS.write_root import _write_root
+from matplotlib.patches import Circle
 
 # matplotlib.use('TkAgg')
 import random
@@ -332,6 +333,79 @@ class Detector:
 
         # plt.show()
         return fig, ax
+
+    def visualize_detector_3d(self):
+        radius_list, material_budget, efficiency_list, loc0_list, loc1_list, halfz_list = self.get_param()
+        num_layers = len(halfz_list)
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # ax.set_aspect('equal')
+        bugmax = max(material_budget)
+        bugmin = min(material_budget)
+        for i in range(num_layers):
+            resolution = 10  # 圆柱体的分辨率
+
+
+
+            height = halfz_list[i] / (num_layers - i + 50) * 50   # 圆柱体高度
+            radius = radius_list[i]  # 圆柱体半径
+
+            # 创建圆柱体的角度和高度数组
+            theta = np.linspace(0, 1 * np.pi, resolution)
+            z = np.linspace(-height, height, resolution)
+            theta, z = np.meshgrid(theta, z)
+
+            # 计算圆柱体表面的 x 和 y 坐标
+            x = radius * np.cos(theta)
+            y = radius * np.sin(theta)
+
+            # # 绘制圆柱体
+            # fig = plt.figure()
+            # ax = fig.add_subplot(111, projection='3d')
+            ax.plot_surface(x, y, z, color=cm.jet((material_budget[i] - bugmin) / (bugmax - bugmin + 1e-5)), alpha=1, edgecolor='k')
+            # # Calculate the coordinates of the layer boundaries
+            # x = [-halfz_list[i], halfz_list[i]]
+            # y = [radius_list[i], radius_list[i]]
+            # y2 = [-radius_list[i], -radius_list[i]]
+            #
+            # # Plot the layer boundaries as lines, color-coded by material
+            # ax.plot(x, y, color=cm.jet((material_budget[i] - bugmin) / (bugmax - bugmin + 1e-5)), linewidth=2,
+            #         alpha=0.8)
+            # ax.plot(x, y2, color=cm.jet((material_budget[i] - bugmin) / (bugmax - bugmin + 1e-5)), linewidth=2,
+            #         alpha=0.8)
+
+        # ax.plot(0, 0, 0, marker='o', markersize=5, color='red', label='Collision Center')
+
+        # ax.set_xlim(-max(halfz_list) * 1.2, max(halfz_list) * 1.2)
+        ax.set_xlim(-max(radius_list) * 1.2, max(radius_list) * 1.2)
+        ax.set_ylim(-max(radius_list) * 1.2, max(radius_list) * 1.2)
+
+        # ax.set_aspect('equal')
+
+        # plt.xlabel('Z (mm)')
+        # plt.ylabel('R (mm)', labelpad=-5)
+        # plt.title('Detector Geometry', fontweight='bold')
+        # plt.legend()
+        # plt.grid(True)
+        # plt.subplots_adjust(left=0.15, right=0.9, bottom=0.1, top=0.93)
+        # ax.minorticks_on()
+        # # 设置主刻度线的样式
+        # ax.tick_params(which='major', length=5, width=1.5, direction='in', right=True,
+        #                top=True)
+        # # 设置小刻度线的样式
+        # ax.tick_params(which='minor', length=3, width=1, direction='in', right=True,
+        #                top=True)
+        # for spine in ax.spines.values():
+        #     spine.set_linewidth(1.5)
+        # # plt.scatter(x_data, y_data, marker='o', label='Result Plot', c=c_data, cmap='jet', s=20)
+        # plt.grid(True, linestyle='-.', linewidth=0.5, color='black',
+        #          alpha=0.2)  # Add denser grid lines
+
+        # plt.show()
+        return fig, ax
+
+
 
     def get_param(self):
         """
@@ -1292,12 +1366,18 @@ class Result:
 
 
 if __name__ == "__main__":
-    # t = time.time()
-    # dec = Detector()
-    # # print(dec)
-    #
-    # for i in range(10, 0, -1):
-    #     dec.add_layer(SiLayer(radius=i ** 2))
+    t = time.time()
+    dec = Detector()
+    # print(dec)
+
+    dec.load_designed(r"D:\files\pyproj\decPip\example\GUI\design_N_10.csv")
+    dec.visualize_detector()
+    dec.delete_layer(3)
+    dec.visualize_detector()
+    plt.show()
+
+
+
     #
     # dec.get_param()
 
@@ -1313,16 +1393,16 @@ if __name__ == "__main__":
     # pa = Particle()
     # print(pa)
 
-    emit = Emitter()
-    print(emit)
-    # emit.add_particle(pa, 1 / 4, default_mode)
-    # emit.add_particle(pa, 1 / 4, default_mode)
-    # emit.add_particle(pa, 1 / 4, default_mode)
-    # emit.add_particle(pa, 1 / 4, default_mode)
+    # emit = Emitter()
     # print(emit)
-
-    emit.load(r"D:\files\pyproj\decPip\DDFS\emit_dict.json")
-    print(emit)
+    # # emit.add_particle(pa, 1 / 4, default_mode)
+    # # emit.add_particle(pa, 1 / 4, default_mode)
+    # # emit.add_particle(pa, 1 / 4, default_mode)
+    # # emit.add_particle(pa, 1 / 4, default_mode)
+    # # print(emit)
+    #
+    # emit.load(r"D:\files\pyproj\decPip\DDFS\emit_dict.json")
+    # print(emit)
 
     #
     # exp = Experiment(dec, pa, envir)
